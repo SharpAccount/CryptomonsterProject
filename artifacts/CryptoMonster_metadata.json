@@ -1,6 +1,6 @@
 {
 	"compiler": {
-		"version": "0.8.21+commit.d9974bed"
+		"version": "0.8.18+commit.87f61d96"
 	},
 	"language": "Solidity",
 	"output": {
@@ -383,7 +383,7 @@
 			"bytecodeHash": "ipfs"
 		},
 		"optimizer": {
-			"enabled": true,
+			"enabled": false,
 			"runs": 200
 		},
 		"remappings": []
@@ -422,11 +422,11 @@
 			]
 		},
 		"CryptoMonster.sol": {
-			"keccak256": "0xa48018dce02a26cfa538b253dca96c973f755e8e0c779e98fa3946ae5e43af9b",
+			"keccak256": "0x35a4028b43934281ac8cb76fed1be525c668bdcec569ad7eb565bd7ce9bbd968",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://7104d8c9b4ce2dcfe82fc5c93c4d53bf88318df82e8f26a792f48e3f7bc4c841",
-				"dweb:/ipfs/QmTWfb4tPPn3NtNzjf7oUWBi9xLWH9iRo87tvp2nFwXN7H"
+				"bzz-raw://2b1e213e061a79a539e1994d30fe3d09aff3d312618d88ce1411d1c243b3f7c5",
+				"dweb:/ipfs/QmQNor9VgLkXBhViGNGF8R5KUjtZdovt8W42RFoC2SyzVR"
 			]
 		}
 	},

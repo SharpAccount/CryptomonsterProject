@@ -1,6 +1,6 @@
 {
 	"compiler": {
-		"version": "0.8.21+commit.d9974bed"
+		"version": "0.8.18+commit.87f61d96"
 	},
 	"language": "Solidity",
 	"output": {
@@ -9,6 +9,50 @@
 				"inputs": [],
 				"stateMutability": "nonpayable",
 				"type": "constructor"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "signed",
+						"type": "string"
+					}
+				],
+				"name": "addTime",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "checkSystemLifeTime",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "_login",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "password",
+						"type": "string"
+					}
+				],
+				"name": "signIn",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
 			},
 			{
 				"inputs": [
@@ -23,7 +67,7 @@
 						"type": "string"
 					}
 				],
-				"name": "registration",
+				"name": "signUp",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
@@ -50,7 +94,7 @@
 			"bytecodeHash": "ipfs"
 		},
 		"optimizer": {
-			"enabled": true,
+			"enabled": false,
 			"runs": 200
 		},
 		"remappings": []
@@ -89,19 +133,27 @@
 			]
 		},
 		"CMONProject.sol": {
-			"keccak256": "0x695e35bd262c0035a7053f6f65589b58ef0eda246f915da53bb6d97b2636b187",
+			"keccak256": "0x7395eccdf1d619dccebca496f5cd23d0dfb0b5de5cb5bf73de0b045e7811d800",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://23ebd467ce7db4b517f8722bdf79cac748bf0f1db7d9283215f7b387608a9c29",
-				"dweb:/ipfs/QmPVmKZ38AvF9potozTBTqv2y6Tx3W5d9uVwg2WhYUchat"
+				"bzz-raw://1a5df6b78dc96bc2f2805b99607d4fd04956e8d5fb28e9082c4dbed36d2137a4",
+				"dweb:/ipfs/QmSyTr4xagYEMtHks3cH7aboo366218xZg2bzNk7Ce4wrw"
 			]
 		},
 		"CryptoMonster.sol": {
-			"keccak256": "0xa48018dce02a26cfa538b253dca96c973f755e8e0c779e98fa3946ae5e43af9b",
+			"keccak256": "0x35a4028b43934281ac8cb76fed1be525c668bdcec569ad7eb565bd7ce9bbd968",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://7104d8c9b4ce2dcfe82fc5c93c4d53bf88318df82e8f26a792f48e3f7bc4c841",
-				"dweb:/ipfs/QmTWfb4tPPn3NtNzjf7oUWBi9xLWH9iRo87tvp2nFwXN7H"
+				"bzz-raw://2b1e213e061a79a539e1994d30fe3d09aff3d312618d88ce1411d1c243b3f7c5",
+				"dweb:/ipfs/QmQNor9VgLkXBhViGNGF8R5KUjtZdovt8W42RFoC2SyzVR"
+			]
+		},
+		"hardhat/console.sol": {
+			"keccak256": "0x7434453e6d3b7d0e5d0eb7846ffdbc27f0ccf3b163591263739b628074dc103a",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://49355f780520494d1d5a0f01858385e51bb5280ce0ecfb960f16995065dca395",
+				"dweb:/ipfs/QmSwJ6C5QLz6xKeQZS8wbwjU1KxRFTYfwbGmtzisd5sRW4"
 			]
 		}
 	},
