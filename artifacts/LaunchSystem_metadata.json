@@ -55,6 +55,13 @@
 				"type": "function"
 			},
 			{
+				"inputs": [],
+				"name": "signOut",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
 				"inputs": [
 					{
 						"internalType": "string",
@@ -133,11 +140,11 @@
 			]
 		},
 		"CMONProject.sol": {
-			"keccak256": "0x7395eccdf1d619dccebca496f5cd23d0dfb0b5de5cb5bf73de0b045e7811d800",
+			"keccak256": "0xcaa500491f2e0d3e8e23f12223c2d7355d61756452979af423b7c6d07dec9753",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://1a5df6b78dc96bc2f2805b99607d4fd04956e8d5fb28e9082c4dbed36d2137a4",
-				"dweb:/ipfs/QmSyTr4xagYEMtHks3cH7aboo366218xZg2bzNk7Ce4wrw"
+				"bzz-raw://c80b7588c72008d9aadadf71543089ff18963d4e6f40a5a253002d568f4ddab2",
+				"dweb:/ipfs/QmWzZd36EfWehFSZKsKPfev4TZxKK8WfmhrBz7cZCWfFk1"
 			]
 		},
 		"CryptoMonster.sol": {
