@@ -140,19 +140,11 @@
 			]
 		},
 		"CMONProject.sol": {
-			"keccak256": "0xcaa500491f2e0d3e8e23f12223c2d7355d61756452979af423b7c6d07dec9753",
+			"keccak256": "0x83c92dbeb4ebad603e4098f3f2ffc8f3e29ad8574da625e5145c60abaa7274b5",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://c80b7588c72008d9aadadf71543089ff18963d4e6f40a5a253002d568f4ddab2",
-				"dweb:/ipfs/QmWzZd36EfWehFSZKsKPfev4TZxKK8WfmhrBz7cZCWfFk1"
-			]
-		},
-		"CryptoMonster.sol": {
-			"keccak256": "0x35a4028b43934281ac8cb76fed1be525c668bdcec569ad7eb565bd7ce9bbd968",
-			"license": "MIT",
-			"urls": [
-				"bzz-raw://2b1e213e061a79a539e1994d30fe3d09aff3d312618d88ce1411d1c243b3f7c5",
-				"dweb:/ipfs/QmQNor9VgLkXBhViGNGF8R5KUjtZdovt8W42RFoC2SyzVR"
+				"bzz-raw://401a01a16511d83f2c4a520207d2ab1fe0adc62a792c7c6189e0fef156e27c9b",
+				"dweb:/ipfs/QmYcMcJk4LGJJKUcA3YgZKV8KsQ2SVPD8NzMKzebHnNYia"
 			]
 		},
 		"hardhat/console.sol": {
