@@ -2,52 +2,18 @@
 pragma solidity >=0.8.18;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-//import "CryptoMonster.sol";
 import "hardhat/console.sol";
 
-contract CryptoMonster is ERC20("CryptoMonster", "CMON") {
-    
-    address public owner;
+contract LaunchSystem is ERC20("CryptoMonster", "CMON") {
 
-    uint public privatePhasePrice = 0.00075 * 10**18;
-    uint256 _totalSupply;
-
-    constructor() {
-         owner = msg.sender;   
-        _mint(owner, 10000000);
+    enum Phases {
+        Seed,
+        Private,
+        Public
     }
 
-    function decimals() public view virtual override returns (uint8) {
-        return 12;
-    }
-    function approve(address spender, uint256 amount) public virtual override returns (bool) {
-        address _owner = msg.sender;
-        _approve(_owner, spender, amount);
-        return true;
-    }
-
-    function transferFrom(uint amount, address _from, address _to, uint tokenType) external {
-        //require(registeredUsers[])
-        //if (tokenType == 0)
-    }
-
-    // function _approve(address owner, address spender, uint256 amount) internal virtual {
-    //     require(owner != address(0), "ERC20: approve from the zero address");
-    //     require(spender != address(0), "ERC20: approve to the zero address");
-
-    //     _allowances[owner][spender] = amount;
-    //     emit Approval(owner, spender, amount);
-    // }
-
-}
-
-contract LaunchSystem {
-    
     enum Roles {
-        Guest,
-        Client,
-        Investor,
-        Supporter,
+        User,
         PrivateProvider,
         PublicProvider,
         Owner
@@ -55,103 +21,188 @@ contract LaunchSystem {
 
     struct User {
         string login;
-        address currentAddress;
+        address wallet;
         bool isInWhitelist;
-        uint seedbalance;
-        uint privatebalance;
-        uint publicbalance;
+        uint256 seedBalance;
+        uint256 privateBalance;
+        uint256 publicBalance;
         Roles role;
     }
 
-    CryptoMonster CMON = new CryptoMonster();
-    uint timeStart;
-    uint timeDif;
-    uint timeSystem; //block.timestamp + timeDif
+    struct Whitelist {
+        string login;
+        address wallet;
+        bool isApproved;
+    }
+
+    uint256 timeSystem = block.timestamp; //block.timestamp + timeDif
+    uint256 timeStart = block.timestamp;
+    uint256 timeDif = 0; 
+    uint256 currentPrice;
+    uint256 currentMaxAmount;
     string signedPerson; //signed person login
+    Phases phase;
+
+    Whitelist[] private whitelistRequires;
+    Whitelist[] private approvedRequires;
 
     mapping(address => User) private registeredUsers;
     mapping(string => address) private logsAddresses;
     mapping(string => bytes32) private logsPasses;
+    mapping(Phases => uint) private prices;
+    mapping(Phases => uint) private maxAmounts;
 
 
-    modifier onlyOwner {
-        require(msg.sender == registeredUsers[msg.sender].currentAddress, "You don`t owner!");
-        _;
-    }
-    modifier onlyProvider(string memory _login, uint providerCode) {
-        if(providerCode == 0) {
-            require(registeredUsers[logsAddresses[_login]].role == Roles.PrivateProvider, "You`re not private provider!");
-        } else if (providerCode == 1) {
-            require(registeredUsers[logsAddresses[_login]].role == Roles.PublicProvider, "You`re not public provider!");
-        } else if (providerCode == 2) {
-            require((registeredUsers[logsAddresses[_login]].role == Roles.PublicProvider) || (registeredUsers[logsAddresses[_login]].role == Roles.PrivateProvider), "You`re not provider!");
-        }
-        _;
-    }
-    modifier onlyRegistered() {
-        require(bytes(signedPerson).length > 0, "You must sign in your account or register it!");
+    modifier onlyThisRole(Roles _role) {
+        require(_role == registeredUsers[msg.sender].role, "You don`t have permissions to do this!");
         _;
     }
 
-    constructor() {
-
-        registeredUsers[msg.sender] = User("Owner", msg.sender, true, 0, 0, 0, Roles.Owner);
-        logsPasses["Owner"] = keccak256(abi.encode("admin"));
-        logsAddresses["Owner"] = msg.sender;
-
-        registeredUsers[0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB] = User("Private Provider", 0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB, true, 0, 0, 0, Roles.PrivateProvider);
-        logsPasses["Private Provider"] = keccak256(abi.encode("admin"));
-        logsAddresses["Private Provider"] = 0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB;
-
-        registeredUsers[0x583031D1113aD414F02576BD6afaBfb302140225] = User("Public Provider", 0x583031D1113aD414F02576BD6afaBfb302140225, true, 0, 0, 0, Roles.PublicProvider);
-        logsPasses["Public Provider"] = keccak256(abi.encode("public"));
-        logsAddresses["Public Provider"] = 0x583031D1113aD414F02576BD6afaBfb302140225;
-
-        registeredUsers[0x5B38Da6a701c568545dCfcB03FcB875f56beddC4] = User("Investor1", 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4, true, 0, 0, 0, Roles.Investor);//300000 * CMON.decimals()
-        logsPasses["Inv1"] = keccak256(abi.encode("p@55W0RD"));
-        logsAddresses["Investor1"] = 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4;
-
-        registeredUsers[0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2] = User("Investor2", 0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2, true, 0, 0, 0, Roles.Investor);//400000 * CMON.decimals()
-        logsPasses["Inv2"] = keccak256(abi.encode("844systemUser"));
-        logsAddresses["Investor2"] = 0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2;
-
-        registeredUsers[0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db] = User("Best friend", 0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db, true, 0, 0, 0, Roles.Investor);//200000 * CMON.decimals()
-        logsPasses["Friend"] = keccak256(abi.encode("pa55WORD"));
-        logsAddresses["Best friend"] = 0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db;
-
-        timeStart = block.timestamp;
-        timeSystem = block.timestamp;
-        timeDif = 0;
+    modifier onlyInThisPhase(Phases _phase) {
+        require(phase == _phase, "This phase isn`t already started or finished!");
+        _;
     }
 
-    function signIn(string memory _login, string memory password) public {
-        require(logsPasses[_login] == keccak256(abi.encode(password)), "Wrong login or password!");
-        require(bytes(signedPerson).length == 0, "You`re already signed!");
-        signedPerson = _login;
+
+    constructor() {  
+        prices[Phases.Private] = 0.00075 ether;
+        prices[Phases.Public] = 0.001 ether;
+
+        maxAmounts[Phases.Private] = 100_000 * 10 ** decimals();
+        maxAmounts[Phases.Public] = 5_000 * 10 ** decimals();
+
+        registeredUsers[msg.sender] = User("owner", msg.sender, true, 0, 0, 0, Roles.Owner);
+        logsPasses["owner"] = keccak256(abi.encode("123"));
+        logsAddresses["owner"] = msg.sender;
+
+        registeredUsers[0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB] = User("priv prov", 0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB, true, 0, 0, 0, Roles.PrivateProvider);
+        logsPasses["priv prov"] = keccak256(abi.encode("123"));
+        logsAddresses["priv prov"] = 0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB;
+
+        registeredUsers[0x583031D1113aD414F02576BD6afaBfb302140225] = User("pub prov", 0x583031D1113aD414F02576BD6afaBfb302140225, true, 0, 0, 0, Roles.PublicProvider);
+        logsPasses["pub prov"] = keccak256(abi.encode("123"));
+        logsAddresses["pub prov"] = 0x583031D1113aD414F02576BD6afaBfb302140225;
+
+        registeredUsers[0x5B38Da6a701c568545dCfcB03FcB875f56beddC4] = User("inv1", 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4, true, 300_000 * 10**decimals(), 0, 0, Roles.User);//300000 * CMON.decimals()
+        logsPasses[string("inv1")] = keccak256(abi.encode("123"));
+        logsAddresses[string("inv1")] = 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4;
+
+        registeredUsers[0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2] = User("inv2", 0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2, true, 400_000 * 10**decimals(), 0, 0, Roles.User);//400000 * CMON.decimals()
+        logsPasses["inv2"] = keccak256(abi.encode("123"));
+        logsAddresses["inv2"] = 0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2;
+
+        registeredUsers[0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db] = User("friend", 0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db, true, 200_000 * 10**decimals(), 0, 0, Roles.User);//200000 * CMON.decimals()
+        logsPasses["friend"] = keccak256(abi.encode("123"));
+        logsAddresses["friend"] = 0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db;
+
+        _mint(msg.sender, 9_100_000 * 10 ** decimals());
+        _resetTime();
     }
+
+
     function signUp(string memory login, string memory password) public {
-        require(registeredUsers[logsAddresses[login]].role == Roles.Guest, "This login is busy!");
-        registeredUsers[logsAddresses[login]] = User(login, msg.sender, false, 0, 0, 0, Roles.Client);
+        require(logsAddresses[login] == address(0), "This login is busy!");
+        require(registeredUsers[logsAddresses[login]].wallet == address(0));
+        logsAddresses[login] = msg.sender;
         logsPasses[login] = keccak256(abi.encode(password));
+        registeredUsers[logsAddresses[login]] = User(login, msg.sender, false, 0, 0, 0, Roles.User);
     }
-    function signOut() public onlyRegistered() {
-        signedPerson = "";
-    }
-    
+
     function checkSystemLifeTime() public returns(uint) {
-        resetTime();
-        console.log(timeDif);
-        return timeDif;
-    }
-    function addTime(string memory signed) public onlyRegistered() onlyProvider(signed, 3) {
-        timeSystem += 1 minutes;
-        resetTime();
+        uint timeLife = _resetTime();
+        console.log(timeLife);
+        return  timeLife;
     }
 
+    function addMinute() public {
+        timeDif += 60;
+        _resetTime();
+    }
 
-    function resetTime() private {
-        timeDif = block.timestamp - timeStart;
+    function askForWhitelistInvite() public onlyInThisPhase(Phases.Seed) {
+        // require(logsAddresses[login] != address(0), "Don`t find your login!");
+        //require(!registeredUsers[msg.sender].whitelist, unicode"Вы уже в вайтлисте");
+        // require(registeredUsers[wallet].currentAddress != address(0), "Don`t find your address!");
+        // asksForInviting[wallet] = login;
+    }
+
+    function acceptInviteRequests(string memory requesterLog, bool isAccepted) public onlyInThisPhase(Phases.Seed) onlyThisRole(Roles.PrivateProvider) {
+        require(logsAddresses[requesterLog] != address(0), "Didn`t find requester`s login!");
+        if (isAccepted == true) {
+            registeredUsers[logsAddresses[requesterLog]].isInWhitelist = true;
+        } else {
+            
+        }
+    }
+
+    function giveReward(address _to, address _from, uint8 amount) public onlyThisRole(Roles.PublicProvider) {
+        // место под require с approve
+        require(registeredUsers[_from].seedBalance >= amount, "You don`t have enough tokens!");
+        registeredUsers[_from].seedBalance -= amount;
+        registeredUsers[_to].seedBalance += amount;
+    }
+
+    function changeTokenCost(uint8 costValue) public onlyThisRole(Roles.PublicProvider) onlyInThisPhase(Phases.Public) {
+        currentPrice = costValue;
+    }
+
+    function buyToken(uint8 amount) public payable {
+        require(currentPrice * amount >= registeredUsers[logsAddresses[signedPerson]].wallet.balance, unicode"У вас недостаточно eth!");
+        if (phase == Phases.Private) {
+            require(registeredUsers[msg.sender].isInWhitelist == true, "Free sale not started");
+            //transfer
+            // registeredUsers[logsAddresses[signedPerson]].currentAddress.Transfer(address(this.balance), );
+        }
+    }
+
+    function signIn(string memory login, string memory password) public view returns(User memory) {
+        require(logsPasses[login] == keccak256(abi.encode(password)), "Wrong login or password!");
+        return registeredUsers[logsAddresses[login]];
+    }
+
+    function decimals() public view virtual override returns (uint8) {
+        return 12;
+    }
+
+    function _transfer(address from, address to, uint256 amount, uint8 tokenType) private {
+        require(to != address(0), unicode"Нельзя перевести токены на несуществующий адрес!");
+        currentPrice ++;//delete
+
+        if (tokenType == 0) {
+            require(registeredUsers[from].seedBalance >= amount, unicode"Не хватает seed токенов!");
+            registeredUsers[from].seedBalance -= amount;
+            registeredUsers[to].seedBalance += amount;
+        } else if (tokenType == 1) {
+            require(registeredUsers[from].privateBalance >= amount, unicode"Не хватает private токенов!");
+            registeredUsers[from].privateBalance -= amount;
+            registeredUsers[to].privateBalance += amount;
+        } else if (tokenType == 2) {
+            require(registeredUsers[from].publicBalance >= amount, unicode"Не хватает public токенов!");
+            registeredUsers[from].publicBalance -= amount;
+            registeredUsers[to].publicBalance += amount;
+        }
+        
+        //emit Transfer(from, to, amount);
+    }
+
+    function _resetTime() private returns(uint256) {
         timeSystem = block.timestamp + timeDif;
+        uint timeLife = (timeSystem - timeStart);
+        if (timeLife > 300 && phase != Phases.Private) {
+            phase = Phases.Private; 
+            _makePhaseConditions(phase);
+        }
+        else if (timeLife > 900 && phase != Phases.Public) {
+            phase = Phases.Public;
+            _makePhaseConditions(phase);
+        }
+        return timeLife;
+    }
+
+    function _makePhaseConditions(Phases _phase) private {
+
+        currentPrice = prices[_phase];
+        currentMaxAmount = maxAmounts[_phase];
     }
 
 }
