@@ -545,11 +545,11 @@
 			]
 		},
 		"CMONProject.sol": {
-			"keccak256": "0xf6b3173e94bfe3ffca530a0441a56cd473a3a0f453cbb6428cc0832da774d8e3",
+			"keccak256": "0x3246328dd8f6c3bd84432ede0322271dc99aa1e5143d9c3cdb6ad1664444b561",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://cba0f1cd7484c81e8501b1ed1016c6a8d7af3ef9f2020f42b9b622f6d7a096e7",
-				"dweb:/ipfs/QmWqenJaynXB2GfyG1jY3YaYupTknKWFkKXUEoerxRWez6"
+				"bzz-raw://ded0f0e3b3d2eeb1cbf257d2be5f0143a81a1ea87619cf8274809e1ca795ce10",
+				"dweb:/ipfs/QmXYoDsd292mh4dJFCTBPGx4w5RSayS4UWL8VfMJZFJbeD"
 			]
 		},
 		"hardhat/console.sol": {

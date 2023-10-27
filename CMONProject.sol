@@ -57,43 +57,43 @@ contract LaunchSystem is ERC20("CryptoMonster", "CMON") {
 
 
     modifier onlyThisRole(Roles _role) {
-        require(_role == registeredUsers[msg.sender].role, "You don`t have permissions to do this!");
+        require(_role == registeredUsers[msg.sender].role, unicode"У вас нет прав, чтоб сделать это!");
         _;
     }
 
     modifier onlyInThisPhase(Phases _phase) {
-        require(phase == _phase, "This phase isn`t already started or finished!");
+        require(phase == _phase, unicode"Эта фаза не началась, либо уже закончилась!");
         _;
     }
 
 
     constructor() {  
-        _mint(msg.sender, 10_000_000 * 10 ** decimals());
+        _mint(0x5B38Da6a701c568545dCfcB03FcB875f56beddC4, 10_000_000 * 10 ** decimals());
 
 
-        registeredUsers[msg.sender] = User("owner", msg.sender, true, 1_000_000 * 10 ** decimals(), 3_000_000 * 10 ** decimals(), 6_000_000 * 10 ** decimals(), Roles.Owner);
+        registeredUsers[0x5B38Da6a701c568545dCfcB03FcB875f56beddC4] = User("owner", 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4, true, 1_000_000 * 10 ** decimals(), 3_000_000 * 10 ** decimals(), 6_000_000 * 10 ** decimals(), Roles.Owner);
         logsPasses["owner"] = keccak256(abi.encode("123"));
-        logsAddresses["owner"] = msg.sender;
+        logsAddresses["owner"] = 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4;
 
-        registeredUsers[0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB] = User("priv prov", 0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB, true, 0, 0, 0, Roles.PrivateProvider);
+        registeredUsers[0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2] = User("priv prov", 0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2, true, 0, 0, 0, Roles.PrivateProvider);
         logsPasses["priv prov"] = keccak256(abi.encode("123"));
-        logsAddresses["priv prov"] = 0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB;
+        logsAddresses["priv prov"] = 0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2;
 
-        registeredUsers[0x583031D1113aD414F02576BD6afaBfb302140225] = User("pub prov", 0x583031D1113aD414F02576BD6afaBfb302140225, true, 0, 0, 0, Roles.PublicProvider);
+        registeredUsers[0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db] = User("pub prov", 0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db, true, 0, 0, 0, Roles.PublicProvider);
         logsPasses["pub prov"] = keccak256(abi.encode("123"));
-        logsAddresses["pub prov"] = 0x583031D1113aD414F02576BD6afaBfb302140225;
+        logsAddresses["pub prov"] = 0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db;
 
-        registeredUsers[0x5B38Da6a701c568545dCfcB03FcB875f56beddC4] = User("inv1", 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4, true, 300_000 * 10 ** decimals(), 0, 0, Roles.User);//300_000 * 10**decimals()
+        registeredUsers[0x78731D3Ca6b7E34aC0F824c42a7cC18A495cabaB] = User("inv1", 0x78731D3Ca6b7E34aC0F824c42a7cC18A495cabaB, true, 300_000 * 10 ** decimals(), 0, 0, Roles.User);//300_000 * 10**decimals()
         logsPasses[string("inv1")] = keccak256(abi.encode("123"));
-        logsAddresses[string("inv1")] = 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4;
+        logsAddresses[string("inv1")] = 0x78731D3Ca6b7E34aC0F824c42a7cC18A495cabaB;
 
-        registeredUsers[0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2] = User("inv2", 0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2, true, 400_000 * 10 ** decimals(), 0, 0, Roles.User);//400_000 * 10**decimals()
+        registeredUsers[0x617F2E2fD72FD9D5503197092aC168c91465E7f2] = User("inv2", 0x617F2E2fD72FD9D5503197092aC168c91465E7f2, true, 400_000 * 10 ** decimals(), 0, 0, Roles.User);//400_000 * 10**decimals()
         logsPasses["inv2"] = keccak256(abi.encode("123"));
-        logsAddresses["inv2"] = 0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2;
+        logsAddresses["inv2"] = 0x617F2E2fD72FD9D5503197092aC168c91465E7f2;
 
-        registeredUsers[0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db] = User("friend", 0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db, true, 200_000 * 10 ** decimals(), 0, 0, Roles.User);//200_000 * 10**decimals()
+        registeredUsers[0x17F6AD8Ef982297579C203069C1DbfFE4348c372] = User("friend", 0x17F6AD8Ef982297579C203069C1DbfFE4348c372, true, 200_000 * 10 ** decimals(), 0, 0, Roles.User);//200_000 * 10**decimals()
         logsPasses["friend"] = keccak256(abi.encode("123"));
-        logsAddresses["friend"] = 0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db;
+        logsAddresses["friend"] = 0x17F6AD8Ef982297579C203069C1DbfFE4348c372;
 
 
         _resetTime();
@@ -105,7 +105,7 @@ contract LaunchSystem is ERC20("CryptoMonster", "CMON") {
 
 
     function signUp(string memory login, string memory password) public {
-        require(logsAddresses[login] == address(0), "This login is busy!");
+        require(logsAddresses[login] == address(0), unicode"Этот логин занят!");
         require(registeredUsers[logsAddresses[login]].wallet == address(0));
 
         logsAddresses[login] = msg.sender;
@@ -131,7 +131,7 @@ contract LaunchSystem is ERC20("CryptoMonster", "CMON") {
     }
 
     function acceptInviteRequests(string memory requesterLog, bool isAccepted) public onlyInThisPhase(Phases.Seed) onlyThisRole(Roles.PrivateProvider) {
-        require(logsAddresses[requesterLog] != address(0), "Didn`t find requester`s login!");
+        require(logsAddresses[requesterLog] != address(0), unicode"Пользователь не нашелся!");
 
         if (isAccepted == true) {
 
@@ -176,7 +176,7 @@ contract LaunchSystem is ERC20("CryptoMonster", "CMON") {
     }
 
     function signIn(string memory login, string memory password) public returns(User memory) {
-        require(logsPasses[login] == keccak256(abi.encode(password)), "Wrong login or password!");
+        require(logsPasses[login] == keccak256(abi.encode(password)), unicode"Неверный логин или пароль!");
         _resetTime();
         return registeredUsers[logsAddresses[login]];
     }
@@ -222,24 +222,25 @@ contract LaunchSystem is ERC20("CryptoMonster", "CMON") {
 
         if (((timeLife > 300) && (timeLife < 900)) && (phase != Phases.Private)) {
             phase = Phases.Private; 
-            _makePhaseConditions(phase);
+            _makePhaseConditions();
         } else if ((timeLife > 900) && (phase != Phases.Public)) {
             phase = Phases.Public;
-            _makePhaseConditions(phase);
+            _makePhaseConditions();
         }
 
         return timeLife;
     }
 
-    function _makePhaseConditions(Phases _phase) private {
-        if (_phase == Phases.Private) {
+    function _makePhaseConditions() private {
+        if (phase == Phases.Private) {
             currentPrice = 0.00075 ether;
             currentMaxAmount = 100_000 * 10 ** decimals();
 
             registeredUsers[logsAddresses["owner"]].privateBalance -= 3_000_000 * 10 ** decimals();
             registeredUsers[logsAddresses["priv prov"]].privateBalance += 3_000_000 * 10 ** decimals();
             _transfer(logsAddresses["owner"], logsAddresses["priv prov"], (3_000_000 * 10 ** decimals()));
-        } else {
+
+        } else if (phase == Phases.Public) {
             currentPrice = 0.001 ether;
             currentMaxAmount = 5_000 * 10 ** decimals();
 
