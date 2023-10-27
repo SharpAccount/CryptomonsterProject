@@ -149,7 +149,7 @@ contract LaunchSystem is ERC20("CryptoMonster", "CMON") {
 
     function giveReward(address _to, uint8 amount) public onlyThisRole(Roles.PublicProvider) {
         require(registeredUsers[msg.sender].publicBalance >= amount, unicode"У вас недостаточно токенов!");
-        transfer(msg.sender, _to, amount, 2);
+        transfer(msg.sender, _to, amount * 10**decimals(), 2);
 
         _resetTime();
     }
@@ -161,15 +161,15 @@ contract LaunchSystem is ERC20("CryptoMonster", "CMON") {
     }
 
     function buyToken(uint256 amount) public payable {
-        require(amount <= currentMaxAmount, unicode"Нельзя переводить больше, чем органиченно данной фазой!");
         require(phase != Phases.Seed, unicode"Нельзя покупать токены в эту фазу!");
+        require(amount <= currentMaxAmount, unicode"Нельзя переводить больше, чем органиченно данной фазой!");
         require(currentPrice * amount <= msg.value, unicode"У вас недостаточно eth!");
 
         if (phase == Phases.Private) {
             require(registeredUsers[msg.sender].isInWhitelist == true, unicode"Свободная продажа ещё не началась!");
-            transfer(logsAddresses["priv prov"], msg.sender, amount, 1);
+            transfer(logsAddresses["priv prov"], msg.sender, amount * 10**decimals(), 1);
         } else {            
-            transfer(logsAddresses["pub prov"], msg.sender, amount, 2);
+            transfer(logsAddresses["pub prov"], msg.sender, amount * 10**decimals(), 2);
         }
 
         _resetTime();
@@ -189,10 +189,8 @@ contract LaunchSystem is ERC20("CryptoMonster", "CMON") {
         require(to != address(0), unicode"Нельзя перевести токены на несуществующий адрес!");
         require(tokenType <= 2, unicode"Нельзя переводить такой тип токенов!");
 
-        amount *= 10**decimals();
-
         if (tokenType == 0) {
-            require(phase == Phases.Seed, unicode"Нельзя покупать seed токены в эту фазу!");
+            //require(phase == Phases.Seed, unicode"Нельзя покупать seed токены в эту фазу!");
 
             registeredUsers[from].seedBalance -= amount;
             registeredUsers[to].seedBalance += amount;
@@ -200,13 +198,13 @@ contract LaunchSystem is ERC20("CryptoMonster", "CMON") {
             return;
 
         } else if (tokenType == 1) {
-            require(phase == Phases.Private, unicode"Нельзя покупать private токены в эту фазу!");
+            //require(phase == Phases.Private, unicode"Нельзя покупать private токены в эту фазу!");
 
             registeredUsers[from].privateBalance -= amount;
             registeredUsers[to].privateBalance += amount;
 
         } else {
-            require(phase == Phases.Public, unicode"Нельзя покупать public токены в эту фазу!");
+            //require(phase == Phases.Public, unicode"Нельзя покупать public токены в эту фазу!");
 
             registeredUsers[from].publicBalance -= amount;
             registeredUsers[to].publicBalance += amount;
@@ -243,6 +241,9 @@ contract LaunchSystem is ERC20("CryptoMonster", "CMON") {
         } else if (phase == Phases.Public) {
             currentPrice = 0.001 ether;
             currentMaxAmount = 5_000 * 10 ** decimals();
+
+            uint256 tokensToReturn = registeredUsers[logsAddresses["priv prov"]].privateBalance;
+            transfer(logsAddresses["priv prov"], logsAddresses["owner"], tokensToReturn, 1);
 
             registeredUsers[logsAddresses["owner"]].publicBalance -= 6_000_000 * 10 ** decimals();
             registeredUsers[logsAddresses["pub prov"]].publicBalance += 6_000_000 * 10 ** decimals();
