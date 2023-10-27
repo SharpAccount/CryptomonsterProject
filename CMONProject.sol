@@ -19,6 +19,7 @@ contract LaunchSystem is ERC20("CryptoMonster", "CMON") {
         Owner
     }
 
+
     struct User {
         string login;
         address wallet;
@@ -35,22 +36,24 @@ contract LaunchSystem is ERC20("CryptoMonster", "CMON") {
         bool isApproved;
     }
 
+
     uint256 timeSystem = block.timestamp; //block.timestamp + timeDif
     uint256 timeStart = block.timestamp;
     uint256 timeDif = 0; 
+
     uint256 currentPrice;
     uint256 currentMaxAmount;
-    string signedPerson; //signed person login
+
     Phases phase;
 
-    Whitelist[] private whitelistRequires;
-    Whitelist[] private approvedRequires;
 
     mapping(address => User) private registeredUsers;
+
     mapping(string => address) private logsAddresses;
     mapping(string => bytes32) private logsPasses;
-    mapping(Phases => uint) private prices;
-    mapping(Phases => uint) private maxAmounts;
+
+    mapping(address => Whitelist) private whitelistRequires;
+    mapping(address => Whitelist) private approvedRequires;
 
 
     modifier onlyThisRole(Roles _role) {
@@ -65,13 +68,10 @@ contract LaunchSystem is ERC20("CryptoMonster", "CMON") {
 
 
     constructor() {  
-        prices[Phases.Private] = 0.00075 ether;
-        prices[Phases.Public] = 0.001 ether;
+        _mint(msg.sender, 10_000_000 * 10 ** decimals());
 
-        maxAmounts[Phases.Private] = 100_000 * 10 ** decimals();
-        maxAmounts[Phases.Public] = 5_000 * 10 ** decimals();
 
-        registeredUsers[msg.sender] = User("owner", msg.sender, true, 0, 0, 0, Roles.Owner);
+        registeredUsers[msg.sender] = User("owner", msg.sender, true, 1_000_000 * 10 ** decimals(), 3_000_000 * 10 ** decimals(), 6_000_000 * 10 ** decimals(), Roles.Owner);
         logsPasses["owner"] = keccak256(abi.encode("123"));
         logsAddresses["owner"] = msg.sender;
 
@@ -83,35 +83,42 @@ contract LaunchSystem is ERC20("CryptoMonster", "CMON") {
         logsPasses["pub prov"] = keccak256(abi.encode("123"));
         logsAddresses["pub prov"] = 0x583031D1113aD414F02576BD6afaBfb302140225;
 
-        registeredUsers[0x5B38Da6a701c568545dCfcB03FcB875f56beddC4] = User("inv1", 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4, true, 300_000 * 10**decimals(), 0, 0, Roles.User);//300000 * CMON.decimals()
+        registeredUsers[0x5B38Da6a701c568545dCfcB03FcB875f56beddC4] = User("inv1", 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4, true, 300_000 * 10 ** decimals(), 0, 0, Roles.User);//300_000 * 10**decimals()
         logsPasses[string("inv1")] = keccak256(abi.encode("123"));
         logsAddresses[string("inv1")] = 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4;
 
-        registeredUsers[0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2] = User("inv2", 0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2, true, 400_000 * 10**decimals(), 0, 0, Roles.User);//400000 * CMON.decimals()
+        registeredUsers[0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2] = User("inv2", 0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2, true, 400_000 * 10 ** decimals(), 0, 0, Roles.User);//400_000 * 10**decimals()
         logsPasses["inv2"] = keccak256(abi.encode("123"));
         logsAddresses["inv2"] = 0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2;
 
-        registeredUsers[0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db] = User("friend", 0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db, true, 200_000 * 10**decimals(), 0, 0, Roles.User);//200000 * CMON.decimals()
+        registeredUsers[0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db] = User("friend", 0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db, true, 200_000 * 10 ** decimals(), 0, 0, Roles.User);//200_000 * 10**decimals()
         logsPasses["friend"] = keccak256(abi.encode("123"));
         logsAddresses["friend"] = 0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db;
 
-        _mint(msg.sender, 9_100_000 * 10 ** decimals());
+
         _resetTime();
+
+        _transfer(logsAddresses["owner"], logsAddresses["inv1"], (300_000 * 10 ** decimals()));
+        _transfer(logsAddresses["owner"], logsAddresses["inv2"], (400_000 * 10 ** decimals()));
+        _transfer(logsAddresses["owner"], logsAddresses["friend"], (200_000 * 10 ** decimals()));
     }
 
 
     function signUp(string memory login, string memory password) public {
         require(logsAddresses[login] == address(0), "This login is busy!");
         require(registeredUsers[logsAddresses[login]].wallet == address(0));
+
         logsAddresses[login] = msg.sender;
         logsPasses[login] = keccak256(abi.encode(password));
         registeredUsers[logsAddresses[login]] = User(login, msg.sender, false, 0, 0, 0, Roles.User);
+
+        _resetTime();
     }
 
-    function checkSystemLifeTime() public returns(uint) {
-        uint timeLife = _resetTime();
+    function checkSystemLifeTime() public {
+        uint256 timeLife = _resetTime();
         console.log(timeLife);
-        return  timeLife;
+        _resetTime();
     }
 
     function addMinute() public {
@@ -120,43 +127,57 @@ contract LaunchSystem is ERC20("CryptoMonster", "CMON") {
     }
 
     function askForWhitelistInvite() public onlyInThisPhase(Phases.Seed) {
-        // require(logsAddresses[login] != address(0), "Don`t find your login!");
-        //require(!registeredUsers[msg.sender].whitelist, unicode"Вы уже в вайтлисте");
-        // require(registeredUsers[wallet].currentAddress != address(0), "Don`t find your address!");
-        // asksForInviting[wallet] = login;
+        whitelistRequires[msg.sender] = Whitelist(registeredUsers[msg.sender].login, msg.sender, false);
     }
 
     function acceptInviteRequests(string memory requesterLog, bool isAccepted) public onlyInThisPhase(Phases.Seed) onlyThisRole(Roles.PrivateProvider) {
         require(logsAddresses[requesterLog] != address(0), "Didn`t find requester`s login!");
+
         if (isAccepted == true) {
+
             registeredUsers[logsAddresses[requesterLog]].isInWhitelist = true;
+            approvedRequires[logsAddresses[requesterLog]] = Whitelist(requesterLog, logsAddresses[requesterLog], true);
+
+            delete whitelistRequires[logsAddresses[requesterLog]];
+
         } else {
-            
+            delete registeredUsers[logsAddresses[requesterLog]];
         }
+
+        _resetTime();
     }
 
-    function giveReward(address _to, address _from, uint8 amount) public onlyThisRole(Roles.PublicProvider) {
-        // место под require с approve
-        require(registeredUsers[_from].seedBalance >= amount, "You don`t have enough tokens!");
-        registeredUsers[_from].seedBalance -= amount;
-        registeredUsers[_to].seedBalance += amount;
+    function giveReward(address _to, uint8 amount) public onlyThisRole(Roles.PublicProvider) {
+        require(registeredUsers[msg.sender].publicBalance >= amount, unicode"У вас недостаточно токенов!");
+        transfer(msg.sender, _to, amount, 2);
+
+        _resetTime();
     }
 
-    function changeTokenCost(uint8 costValue) public onlyThisRole(Roles.PublicProvider) onlyInThisPhase(Phases.Public) {
-        currentPrice = costValue;
+    function changeTokenCost(uint8 costWeiValue) public onlyThisRole(Roles.PublicProvider) onlyInThisPhase(Phases.Public) {
+        currentPrice = costWeiValue;
+
+        _resetTime();
     }
 
-    function buyToken(uint8 amount) public payable {
-        require(currentPrice * amount >= registeredUsers[logsAddresses[signedPerson]].wallet.balance, unicode"У вас недостаточно eth!");
+    function buyToken(uint256 amount) public payable {
+        require(amount <= currentMaxAmount, unicode"Нельзя переводить больше, чем органиченно данной фазой!");
+        require(phase != Phases.Seed, unicode"Нельзя покупать токены в эту фазу!");
+        require(currentPrice * amount <= msg.value, unicode"У вас недостаточно eth!");
+
         if (phase == Phases.Private) {
-            require(registeredUsers[msg.sender].isInWhitelist == true, "Free sale not started");
-            //transfer
-            // registeredUsers[logsAddresses[signedPerson]].currentAddress.Transfer(address(this.balance), );
+            require(registeredUsers[msg.sender].isInWhitelist == true, unicode"Свободная продажа ещё не началась!");
+            transfer(logsAddresses["priv prov"], msg.sender, amount, 1);
+        } else {            
+            transfer(logsAddresses["pub prov"], msg.sender, amount, 2);
         }
+
+        _resetTime();
     }
 
-    function signIn(string memory login, string memory password) public view returns(User memory) {
+    function signIn(string memory login, string memory password) public returns(User memory) {
         require(logsPasses[login] == keccak256(abi.encode(password)), "Wrong login or password!");
+        _resetTime();
         return registeredUsers[logsAddresses[login]];
     }
 
@@ -164,45 +185,67 @@ contract LaunchSystem is ERC20("CryptoMonster", "CMON") {
         return 12;
     }
 
-    function _transfer(address from, address to, uint256 amount, uint8 tokenType) private {
+    function transfer(address from, address to, uint256 amount, uint8 tokenType) private {
         require(to != address(0), unicode"Нельзя перевести токены на несуществующий адрес!");
-        currentPrice ++;//delete
+        require(tokenType <= 2, unicode"Нельзя переводить такой тип токенов!");
+
+        amount *= 10**decimals();
 
         if (tokenType == 0) {
-            require(registeredUsers[from].seedBalance >= amount, unicode"Не хватает seed токенов!");
+            require(phase == Phases.Seed, unicode"Нельзя покупать seed токены в эту фазу!");
+
             registeredUsers[from].seedBalance -= amount;
             registeredUsers[to].seedBalance += amount;
+
+            return;
+
         } else if (tokenType == 1) {
-            require(registeredUsers[from].privateBalance >= amount, unicode"Не хватает private токенов!");
+            require(phase == Phases.Private, unicode"Нельзя покупать private токены в эту фазу!");
+
             registeredUsers[from].privateBalance -= amount;
             registeredUsers[to].privateBalance += amount;
-        } else if (tokenType == 2) {
-            require(registeredUsers[from].publicBalance >= amount, unicode"Не хватает public токенов!");
+
+        } else {
+            require(phase == Phases.Public, unicode"Нельзя покупать public токены в эту фазу!");
+
             registeredUsers[from].publicBalance -= amount;
             registeredUsers[to].publicBalance += amount;
         }
-        
-        //emit Transfer(from, to, amount);
+
+        _transfer(from, to, amount);
+        _resetTime();
     }
 
     function _resetTime() private returns(uint256) {
         timeSystem = block.timestamp + timeDif;
-        uint timeLife = (timeSystem - timeStart);
-        if (timeLife > 300 && phase != Phases.Private) {
+        uint256 timeLife = (timeSystem - timeStart);
+
+        if (((timeLife > 300) && (timeLife < 900)) && (phase != Phases.Private)) {
             phase = Phases.Private; 
             _makePhaseConditions(phase);
-        }
-        else if (timeLife > 900 && phase != Phases.Public) {
+        } else if ((timeLife > 900) && (phase != Phases.Public)) {
             phase = Phases.Public;
             _makePhaseConditions(phase);
         }
+
         return timeLife;
     }
 
     function _makePhaseConditions(Phases _phase) private {
+        if (_phase == Phases.Private) {
+            currentPrice = 0.00075 ether;
+            currentMaxAmount = 100_000 * 10 ** decimals();
 
-        currentPrice = prices[_phase];
-        currentMaxAmount = maxAmounts[_phase];
+            registeredUsers[logsAddresses["owner"]].privateBalance -= 3_000_000 * 10 ** decimals();
+            registeredUsers[logsAddresses["priv prov"]].privateBalance += 3_000_000 * 10 ** decimals();
+            _transfer(logsAddresses["owner"], logsAddresses["priv prov"], (3_000_000 * 10 ** decimals()));
+        } else {
+            currentPrice = 0.001 ether;
+            currentMaxAmount = 5_000 * 10 ** decimals();
+
+            registeredUsers[logsAddresses["owner"]].publicBalance -= 6_000_000 * 10 ** decimals();
+            registeredUsers[logsAddresses["pub prov"]].publicBalance += 6_000_000 * 10 ** decimals();
+            _transfer(logsAddresses["owner"], logsAddresses["pub prov"], (6_000_000 * 10 ** decimals()) );
+        }
     }
-
 }

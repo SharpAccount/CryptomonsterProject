@@ -162,9 +162,9 @@
 			{
 				"inputs": [
 					{
-						"internalType": "uint8",
+						"internalType": "uint256",
 						"name": "amount",
-						"type": "uint8"
+						"type": "uint256"
 					}
 				],
 				"name": "buyToken",
@@ -176,7 +176,7 @@
 				"inputs": [
 					{
 						"internalType": "uint8",
-						"name": "costValue",
+						"name": "costWeiValue",
 						"type": "uint8"
 					}
 				],
@@ -188,13 +188,7 @@
 			{
 				"inputs": [],
 				"name": "checkSystemLifeTime",
-				"outputs": [
-					{
-						"internalType": "uint256",
-						"name": "",
-						"type": "uint256"
-					}
-				],
+				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
 			},
@@ -240,11 +234,6 @@
 					{
 						"internalType": "address",
 						"name": "_to",
-						"type": "address"
-					},
-					{
-						"internalType": "address",
-						"name": "_from",
 						"type": "address"
 					},
 					{
@@ -353,7 +342,7 @@
 						"type": "tuple"
 					}
 				],
-				"stateMutability": "view",
+				"stateMutability": "nonpayable",
 				"type": "function"
 			},
 			{
@@ -556,11 +545,11 @@
 			]
 		},
 		"CMONProject.sol": {
-			"keccak256": "0x4195940ec8307fe03b311d375f1bda0d3214042731b17736c51638df87c4b14a",
+			"keccak256": "0xf6b3173e94bfe3ffca530a0441a56cd473a3a0f453cbb6428cc0832da774d8e3",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://c8a67e95f5216b2954421f8eef6d1424f8e6f4292f517e3b56e50b9670bf7793",
-				"dweb:/ipfs/QmTXXGEAzBUcYGE8DNMj9EK8V4uTEbbHi1J4H6VvfcLQiz"
+				"bzz-raw://cba0f1cd7484c81e8501b1ed1016c6a8d7af3ef9f2020f42b9b622f6d7a096e7",
+				"dweb:/ipfs/QmWqenJaynXB2GfyG1jY3YaYupTknKWFkKXUEoerxRWez6"
 			]
 		},
 		"hardhat/console.sol": {
